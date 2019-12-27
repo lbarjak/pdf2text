@@ -3,8 +3,7 @@ package pdf2text;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,6 +11,8 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
 public class PDF2text {
+	
+	private static ArrayList<String> toFile = new ArrayList<>();
 
     public static void main(String[] args) throws IOException {
         
@@ -20,43 +21,54 @@ public class PDF2text {
         String text = new PDFTextStripper().getText(doc);
         //System.out.println(text);
         replaced(text);
-//        List<String> rows = Arrays.asList(text.split("\\n"));
-//        for(String item : rows) {
-//        	System.out.println(replaced(item));
-//        }
-//        System.out.println(rows);
-
-//        String out = fileName.replace("pdf", "txt");
-//        try (FileWriter fw = new FileWriter(out)) {
-//            fw.write(text);
-//        }
+        writeToFileCSV();
     }
     
     static void replaced(String text) {
-    	String result = "";
-    	String amitKeresunkRegex = "(Hívjon!$&&AT-.+(?=(\\nAT))|AT-.+\\n.+Ft(?=(\\nAT)))";
-        Pattern amitKeresunkRegexObject = Pattern.compile(amitKeresunkRegex);
+    	String row = "";
+    	//String amitKeresunkRegex = "\\S+(?=( Audio-Technica)).*Ft(?=(\\nAT))|\\S+(?=( Audio-Technica)).*\\n.*Ft(?=(\\nAT))";
+    	String amitKeresunkRegex = "\\S+(?=( Audio-Technica)).*Ft(?=(\\nAT))|\\S+(?=( Audio-Technica)).*\\n.*Ft(?=(\\nAT))";
+    	Pattern amitKeresunkRegexObject = Pattern.compile(amitKeresunkRegex);
         Matcher matcherIlleszkedesek = amitKeresunkRegexObject.matcher(text);
         int k, v;
+        int count = 0;
         while (matcherIlleszkedesek.find()) {
         	k= matcherIlleszkedesek.start();
         	v= matcherIlleszkedesek.end();
-        	//System.out.print(k + " - " + v + " ");
-        	//(?<=foo)bar(?=bar)
-        	result = text.substring(k, v)
+        	row = text.substring(k, v)
         			.replaceFirst("\\n", " ")
         	        .replace(" Ft ", ";")
         	        .replace(" Ft", "")
         			.replaceAll("(?<= \\d+) (?=\\d{3};)", "")
+        			.replaceAll("(?<= \\d+) (?=\\d{6};)", "")
         			.replaceAll(" (?=\\d{3}$)", "")
+        			.replaceAll(" (?=\\d{6}$)", "")
         			.replaceAll(" (?=\\d+;\\d+$)", "~")
-        			.replaceFirst("(?<=^AT-.+) ", "~")
+        			.replaceFirst("(?<=^AT.+) ", "~")
         			.replaceFirst("~.+~", ";")
         			;
-        	System.out.println(result);
+        	toFile.add(row);
+        	System.out.print(++count + ". ");
+        	System.out.println(row);
         }
     }
+
+	private static void writeToFileCSV() {
+
+		String time = new Dates().now();
+		FileWriter fw;
+		try {
+			fw = new FileWriter("arlista_" + time + ".csv");
+			for (String row : toFile) {
+				fw.write(row + "\n");
+			}
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }
+
 //https://www.regular-expressions.info/refcharacters.html
 
 //https://www.tutorialkart.com/pdfbox/read-text-pdf-document-using-pdfbox-2-0/
