@@ -11,49 +11,38 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
 public class PDF2text {
-	
-	private static ArrayList<String> toFile = new ArrayList<>();
 
-    public static void main(String[] args) throws IOException {
-        
-    	String fileName = "Audio_Technica_201805_arlista.pdf";
-        PDDocument doc = PDDocument.load(new File(fileName));
-        String text = new PDFTextStripper().getText(doc);
-        //System.out.println(text);
-        replaced(text);
-        writeToFileCSV();
-    }
-    
-    static void replaced(String text) {
-    	String row = "";
-    	String amitKeresunkRegex = "AT\\S+(?=( Audio-Technica)).*Ft(?=(\\n))|AT\\S+(?=( Audio-Technica)).*\\n[^AT].*Ft(?=(\\n))";
-    	Pattern amitKeresunkRegexObject = Pattern.compile(amitKeresunkRegex);
-        Matcher matcherIlleszkedesek = amitKeresunkRegexObject.matcher(text);
-        int k, v;
-        int count = 0;
-        while (matcherIlleszkedesek.find()) {
-        	k= matcherIlleszkedesek.start();
-        	v= matcherIlleszkedesek.end();
-        	row = text.substring(k, v)
-        			.replaceFirst("\\n", " ")
-        	        .replace(" Ft ", ";")
-        	        .replace(" Ft", "")
-        			.replaceAll("(?<= \\d+) (?=\\d{3};)", "")
-        			.replaceAll("(?<= \\d+) (?=\\d{6};)", "")
-        			.replaceAll(" (?=\\d{3}$)", "")
-        			.replaceAll(" (?=\\d{6}$)", "")
-        			.replaceAll(" (?=\\d+;\\d+$)", "~")
-        			.replaceFirst("(?<=^AT.+) ", "~")
-        			.replaceFirst("~.+~", ";")
-        			;
-        	toFile.add(row);
-        	System.out.print(++count + ". ");
-        	System.out.println(row);
-        }
-    }
+	private static ArrayList<String> toFile = new ArrayList<>();
+	private static String text;
+
+	public static void main(String[] args) throws IOException {
+		String fileName = "Audio_Technica_201805_arlista.pdf";
+		PDDocument doc = PDDocument.load(new File(fileName));
+		text = new PDFTextStripper().getText(doc);
+		replacements();
+		writeToFileCSV();
+	}
+
+	static void replacements() {
+		String row = "";
+		String amitKeresunkRegex = "AT\\S+(?=( Audio-Technica)).*Ft(?=(\\n))|AT\\S+(?=( Audio-Technica)).*\\n[^AT].*Ft(?=(\\n))";
+		Pattern amitKeresunkRegexObject = Pattern.compile(amitKeresunkRegex);
+		Matcher matcherIlleszkedesek = amitKeresunkRegexObject.matcher(text);
+		while (matcherIlleszkedesek.find()) {
+			row = text.substring(matcherIlleszkedesek.start(), matcherIlleszkedesek.end()).replaceFirst("\\n", " ")
+					.replaceFirst("(?<=^AT.+) ", "~")
+					.replaceAll(" Ft.+Ft", "")
+					.replaceAll("(?<= \\d+) (?=\\d{3}$)", "")
+					.replaceAll("(?<= \\d+) (?=\\d{6}$)", "")
+					.replaceAll(" (?=\\d+$)", "~")
+					.replaceFirst("~.+~", ";")
+					;
+			toFile.add(row);
+			System.out.println(row);
+		}
+	}
 
 	private static void writeToFileCSV() {
-
 		String time = new Dates().now();
 		FileWriter fw;
 		try {
@@ -67,12 +56,3 @@ public class PDF2text {
 		}
 	}
 }
-
-//https://www.regular-expressions.info/refcharacters.html
-
-//https://www.tutorialkart.com/pdfbox/read-text-pdf-document-using-pdfbox-2-0/
-//pdfbox-2.0.11.jar + fontbox-2.0.11.jar + commons-logging-1.2.jar
-//http://pinter.org/archives/5782
-
-//https://www.ocpsoft.org/opensource/guide-to-regular-expressions-in-java-part-2/
-//https://www.javaworld.com/article/2077757/optimizing-regular-expressions-in-java.html?page=4
