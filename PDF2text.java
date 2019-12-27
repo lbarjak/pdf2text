@@ -26,8 +26,7 @@ public class PDF2text {
     
     static void replaced(String text) {
     	String row = "";
-    	//String amitKeresunkRegex = "\\S+(?=( Audio-Technica)).*Ft(?=(\\nAT))|\\S+(?=( Audio-Technica)).*\\n.*Ft(?=(\\nAT))";
-    	String amitKeresunkRegex = "\\S+(?=( Audio-Technica)).*Ft(?=(\\nAT))|\\S+(?=( Audio-Technica)).*\\n.*Ft(?=(\\nAT))";
+    	String amitKeresunkRegex = "AT\\S+(?=( Audio-Technica)).*Ft(?=(\\n))|AT\\S+(?=( Audio-Technica)).*\\n[^AT].*Ft(?=(\\n))";
     	Pattern amitKeresunkRegexObject = Pattern.compile(amitKeresunkRegex);
         Matcher matcherIlleszkedesek = amitKeresunkRegexObject.matcher(text);
         int k, v;
