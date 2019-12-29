@@ -34,7 +34,6 @@ public class PDF2text {
 					.replaceFirst("\\n", " ")
 					.replaceFirst(" ", "~")
 					.replaceAll("(?<= \\d+) (?=\\d{3})", "")
-					.replaceAll(" (?=\\d{3,}$)", "~")
 					.replaceAll(" (?=\\d+$)", "~")
 					.replaceFirst("~.+~", ";")
 					;
