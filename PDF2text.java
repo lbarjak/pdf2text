@@ -26,18 +26,16 @@ public class PDF2text {
 	static void replacements() {
 		int count = 0;
 		String row = "";
-		//String amitKeresunkRegex = "AT\\S+(?=( Audio-Technica)).*Ft(?=(\\n))|AT\\S+(?=( Audio-Technica)).*\\n[^AT].*Ft(?=(\\n))";
-		//String amitKeresunkRegex = "AT\\S+(?=( Audio-Technica))(.*|.*\\n[^AT].*)Ft(?=(\\n))";
-		//String amitKeresunkRegex = "AT\\S+(?=( Audio-Technica)).*(\\n[^AT].*)?Ft(?=(\\n))";
-		String amitKeresunkRegex = "AT\\S+(?=( Audio-Technica)).*(\\n[^AT].*)?(?=(Ft[ \\d]+Ft\\n))";
+		String amitKeresunkRegex = "(AT.*(\\n[^AT].*)?) Ft.+Ft";
 		Pattern amitKeresunkRegexObject = Pattern.compile(amitKeresunkRegex);
 		Matcher matcherIlleszkedesek = amitKeresunkRegexObject.matcher(text);
 		while (matcherIlleszkedesek.find()) {
-			row = text.substring(matcherIlleszkedesek.start(), matcherIlleszkedesek.end())
+			row = matcherIlleszkedesek.group(1)
 					.replaceFirst("\\n", " ")
-					.replaceFirst("(?<=^AT.+) ", "~")
+					.replaceFirst(" ", "~")
 					.replaceAll("(?<= \\d+) (?=\\d{3})", "")
-					.replaceAll(" (?=\\d{3,})", "~")
+					.replaceAll(" (?=\\d{3,}$)", "~")
+					.replaceAll(" (?=\\d+$)", "~")
 					.replaceFirst("~.+~", ";")
 					;
 			toFile.add(row);
