@@ -22,31 +22,30 @@ public class PDF2text {
 		replacements();
 		writeToFileCSV();
 	}
-
+	
 	static void replacements() {
-		//int count = 0;
+		int count = 0;
 		String row = "";
 		//String amitKeresunkRegex = "AT\\S+(?=( Audio-Technica)).*Ft(?=(\\n))|AT\\S+(?=( Audio-Technica)).*\\n[^AT].*Ft(?=(\\n))";
 		//String amitKeresunkRegex = "AT\\S+(?=( Audio-Technica))(.*|.*\\n[^AT].*)Ft(?=(\\n))";
-		String amitKeresunkRegex = "AT\\S+(?=( Audio-Technica)).*(\\n[^AT].*)?Ft(?=(\\n))";
+		//String amitKeresunkRegex = "AT\\S+(?=( Audio-Technica)).*(\\n[^AT].*)?Ft(?=(\\n))";
+		String amitKeresunkRegex = "AT\\S+(?=( Audio-Technica)).*(\\n[^AT].*)?(?=(Ft[ \\d]+Ft\\n))";
 		Pattern amitKeresunkRegexObject = Pattern.compile(amitKeresunkRegex);
 		Matcher matcherIlleszkedesek = amitKeresunkRegexObject.matcher(text);
 		while (matcherIlleszkedesek.find()) {
 			row = text.substring(matcherIlleszkedesek.start(), matcherIlleszkedesek.end())
 					.replaceFirst("\\n", " ")
 					.replaceFirst("(?<=^AT.+) ", "~")
-					.replaceAll(" Ft.+Ft", "")
-					.replaceAll("(?<= \\d+) (?=\\d{3}$)", "")
-					.replaceAll("(?<= \\d+) (?=\\d{6}$)", "")
-					.replaceAll(" (?=\\d+$)", "~")
+					.replaceAll("(?<= \\d+) (?=\\d{3})", "")
+					.replaceAll(" (?=\\d{3,})", "~")
 					.replaceFirst("~.+~", ";")
 					;
 			toFile.add(row);
-			//System.out.print(++count + ". ");
+			System.out.print(++count + ". ");
 			System.out.println(row);
 		}
 	}
-
+	
 	private static void writeToFileCSV() {
 		String time = new Dates().now();
 		FileWriter fw;
