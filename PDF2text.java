@@ -22,27 +22,21 @@ public class PDF2text {
 		replacements();
 		writeToFileCSV();
 	}
-	
+
 	static void replacements() {
 		int count = 0;
 		String row = "";
-		String amitKeresunkRegex = "(AT.*(\\n[^AT])?.*) Ft.+Ft";
+		String amitKeresunkRegex = "(AT\\S+) .*? ([ \\d]+) Ft.+Ft";
 		Pattern amitKeresunkRegexObject = Pattern.compile(amitKeresunkRegex);
-		Matcher matcherIlleszkedesek = amitKeresunkRegexObject.matcher(text);
-		while (matcherIlleszkedesek.find()) {
-			row = matcherIlleszkedesek.group(1)
-					.replaceFirst("\\n", " ")
-					.replaceFirst(" ", "~")
-					.replaceAll("(?<= \\d+) (?=\\d{3})", "")
-					.replaceAll(" (?=\\d+$)", "~")
-					.replaceFirst("~.+~", ";")
-					;
+		Matcher mIlleszkedesek = amitKeresunkRegexObject.matcher(text);
+		while (mIlleszkedesek.find()) {
+			row = (mIlleszkedesek.group(1) + ";" + mIlleszkedesek.group(2)).replace(" ", "");
 			toFile.add(row);
 			System.out.print(++count + ". ");
 			System.out.println(row);
 		}
 	}
-	
+
 	private static void writeToFileCSV() {
 		String time = new Dates().now();
 		FileWriter fw;
