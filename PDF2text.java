@@ -26,11 +26,11 @@ public class PDF2text {
 	static void replacements() {
 		int count = 0;
 		String row = "";
-		String amitKeresunkRegex = "(AT\\S+) .*?((\\n[^AT])?).*? ([ \\d]+) Ft.+Ft";
+		String amitKeresunkRegex = "(AT\\S+) .*?(\\n[^AT])?.*? ([ \\d]+) Ft.+Ft";
 		Pattern amitKeresunkRegexObject = Pattern.compile(amitKeresunkRegex);
 		Matcher mIlleszkedesek = amitKeresunkRegexObject.matcher(text);
 		while (mIlleszkedesek.find()) {
-			row = (mIlleszkedesek.group(1) + ";" + mIlleszkedesek.group(4)).replace(" ", "");
+			row = (mIlleszkedesek.group(1) + ";" + mIlleszkedesek.group(3)).replace(" ", "");
 			toFile.add(row);
 			System.out.print(++count + ". ");
 			System.out.println(row);
