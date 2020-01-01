@@ -20,20 +20,44 @@ public class PDF2text {
 		PDDocument doc = PDDocument.load(new File(fileName));
 		text = new PDFTextStripper().getText(doc);
 		replacements();
-		writeToFileCSV();
+		//writeToFileCSV();
 	}
 
+//	static void replacements() {
+//		int count = 0;
+//		String row = "";
+//		String amitKeresunkRegex = "(AT\\S+) .*?(\\n[^AT])?.*? ([ \\d]+) Ft.+Ft";
+//		Pattern amitKeresunkRegexObject = Pattern.compile(amitKeresunkRegex);
+//		Matcher mIlleszkedesek = amitKeresunkRegexObject.matcher(text);
+//		while (mIlleszkedesek.find()) {
+//			row = (mIlleszkedesek.group(1) + ";" + mIlleszkedesek.group(3)).replace(" ", "");
+//			toFile.add(row);
+//			System.out.print(++count + ". ");
+//			System.out.println(row);
+//		}
+//	}
+	
 	static void replacements() {
 		int count = 0;
 		String row = "";
-		String amitKeresunkRegex = "(AT\\S+) .*?(\\n[^AT])?.*? ([ \\d]+) Ft.+Ft";
+		String amitKeresunkRegex = "(AT\\S+)( .*?)(\\n[^AT])?(.*? )([ \\d]+)( Ft.+Ft)";
 		Pattern amitKeresunkRegexObject = Pattern.compile(amitKeresunkRegex);
 		Matcher mIlleszkedesek = amitKeresunkRegexObject.matcher(text);
 		while (mIlleszkedesek.find()) {
-			row = (mIlleszkedesek.group(1) + ";" + mIlleszkedesek.group(3)).replace(" ", "");
+			row = (mIlleszkedesek.group(1) + ";" + mIlleszkedesek.group(5)).replace(" ", "");
 			toFile.add(row);
 			System.out.print(++count + ". ");
 			System.out.println(row);
+			System.out.println(mIlleszkedesek.group(0));
+			System.out.println(amitKeresunkRegex);
+			for(int i = 1; i <= mIlleszkedesek.groupCount(); i++) {
+				System.out.print(mIlleszkedesek.group(i));
+				System.out.print("|");
+			}
+			System.out.println("\n");
+			if(count == 25 ) {
+				break;
+			}
 		}
 	}
 	
