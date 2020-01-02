@@ -26,7 +26,7 @@ public class PDF2text {
 	static void replacements() {
 		int count = 0;
 		String row = "";
-		String amitKeresunkRegex = "(AT\\S+) .*?(\\n[^AT])?.*? ([ \\d]+)[^F]";
+		String amitKeresunkRegex = "(AT\\S+) .*?(\\n[^AT])?.*? ([ \\d]+) Ft.+Ft";
 		Pattern amitKeresunkRegexObject = Pattern.compile(amitKeresunkRegex);
 		Matcher mIlleszkedesek = amitKeresunkRegexObject.matcher(text);
 		while (mIlleszkedesek.find()) {
