@@ -34,8 +34,7 @@ public class PDF2text {
 			if(mIlleszkedesek.group(2) != null) {
 				row = row + mIlleszkedesek.group(2).replaceAll("[^0-9]+", "");
 			}
-			row = row + mIlleszkedesek.group(3);
-			row = row.replaceAll("\\s", "");
+			row = row + mIlleszkedesek.group(3).replaceAll("\\s", "");
 			toFile.add(row);
 			System.out.print(++count + ". ");
 			System.out.println(row);
