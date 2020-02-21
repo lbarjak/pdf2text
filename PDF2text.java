@@ -16,23 +16,25 @@ public class PDF2text {
 	private static String text;
 
 	public static void main(String[] args) throws IOException {
-		String fileName = "Audio_Technica_201805_arlista.pdf";
+		String fileName = "mipro_arlista.pdf";
 		PDDocument doc = PDDocument.load(new File(fileName));
 		text = new PDFTextStripper().getText(doc);
-		replacements();
-		writeToFileCSV();
+		// System.out.println(text);
+		// audioTechnica();
+		mipro();
+		// writeToFileCSV();
 	}
 
-	static void replacements() {
+	static void audioTechnica() {
 		int count = 0;
 		String row = "";
-		String amitKeresunkRegex = "(AT\\S+) .*?(\\n[^AT].*?)? ([ \\d]+) Ft.+Ft";
+		String amitKeresunkRegex = "(AT\\S+) .*?(\\n[^AT].*?)? ([ \\d]+) Ft.+Ft";// Audio Technica
 		Pattern amitKeresunkRegexObject = Pattern.compile(amitKeresunkRegex);
 		Matcher mIlleszkedesek = amitKeresunkRegexObject.matcher(text);
 		while (mIlleszkedesek.find()) {
 			row = (mIlleszkedesek.group(1) + ";");
-			if(mIlleszkedesek.group(2) != null) {
-				row = row + mIlleszkedesek.group(2).replaceAll("[^0-9]+", "");
+			if (mIlleszkedesek.group(2) != null) {
+				row = row + mIlleszkedesek.group(2).replaceAll("\\D", "");
 			}
 			row = row + mIlleszkedesek.group(3).replaceAll("\\s", "");
 			toFile.add(row);
@@ -40,7 +42,23 @@ public class PDF2text {
 			System.out.println(row);
 		}
 	}
-	
+
+	static void mipro() {
+		String cikkszam = "";
+		String arak = "";
+		String cikkszamRegex = "(\\d{6}C?)";
+		Pattern cikkszamRegexObject = Pattern.compile(cikkszamRegex);
+		Matcher cikkszamIlleszkedesek = cikkszamRegexObject.matcher(text);
+		String arakRegex = "(\\d{0,3} ?\\d{1,3}) Ft +(\\d? ?\\d{0,3} ?\\d{1,3}) Ft";
+		Pattern arakRegexObject = Pattern.compile(arakRegex);
+		Matcher arakIlleszkedesek = arakRegexObject.matcher(text);
+		while (cikkszamIlleszkedesek.find() && arakIlleszkedesek.find()) {
+			cikkszam = cikkszamIlleszkedesek.group(1);
+			arak = arakIlleszkedesek.group(1).replace(" ", "");
+			System.out.println(cikkszam + ";" + arak);
+		}
+	}
+
 	private static void writeToFileCSV() {
 		String time = new Dates().now();
 		FileWriter fw;
