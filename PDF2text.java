@@ -19,7 +19,7 @@ public class PDF2text {
 		String fileName = "mipro_arlista.pdf";
 		PDDocument doc = PDDocument.load(new File(fileName));
 		text = new PDFTextStripper().getText(doc);
-		// System.out.println(text);
+		//System.out.println(text);
 		// audioTechnica();
 		mipro();
 		// writeToFileCSV();
@@ -46,15 +46,12 @@ public class PDF2text {
 	static void mipro() {
 		String cikkszam = "";
 		String arak = "";
-		String cikkszamRegex = "(\\d{6}C?)";
-		Pattern cikkszamRegexObject = Pattern.compile(cikkszamRegex);
-		Matcher cikkszamIlleszkedesek = cikkszamRegexObject.matcher(text);
-		String arakRegex = "(\\d{0,3} ?\\d{1,3}) Ft +(\\d? ?\\d{0,3} ?\\d{1,3}) Ft";
-		Pattern arakRegexObject = Pattern.compile(arakRegex);
-		Matcher arakIlleszkedesek = arakRegexObject.matcher(text);
-		while (cikkszamIlleszkedesek.find() && arakIlleszkedesek.find()) {
-			cikkszam = cikkszamIlleszkedesek.group(1);
-			arak = arakIlleszkedesek.group(1).replace(" ", "");
+		String rowRegex = "(\\d{6}C?)(?:.|\\n)+?(\\d{0,3} ?\\d{1,3}) Ft.+";
+		Pattern rowRegexObject = Pattern.compile(rowRegex);
+		Matcher rowIlleszkedesek = rowRegexObject.matcher(text);
+		while (rowIlleszkedesek.find()) {
+			cikkszam = rowIlleszkedesek.group(1);
+			arak = rowIlleszkedesek.group(2).replace(" ", "");
 			System.out.println(cikkszam + ";" + arak);
 		}
 	}
