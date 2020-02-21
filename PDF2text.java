@@ -19,7 +19,7 @@ public class PDF2text {
 		String fileName = "mipro_arlista.pdf";
 		PDDocument doc = PDDocument.load(new File(fileName));
 		text = new PDFTextStripper().getText(doc);
-		//System.out.println(text);
+		System.out.println(text);
 		// audioTechnica();
 		mipro();
 		// writeToFileCSV();
@@ -28,7 +28,7 @@ public class PDF2text {
 	static void audioTechnica() {
 		int count = 0;
 		String row = "";
-		String amitKeresunkRegex = "(AT\\S+) .*?(\\n[^AT].*?)? ([ \\d]+) Ft.+Ft";// Audio Technica
+		String amitKeresunkRegex = "(AT\\S+) .*?(\\n[^AT].*?)? ([ \\d]+) Ft.+Ft";
 		Pattern amitKeresunkRegexObject = Pattern.compile(amitKeresunkRegex);
 		Matcher mIlleszkedesek = amitKeresunkRegexObject.matcher(text);
 		while (mIlleszkedesek.find()) {
@@ -46,7 +46,7 @@ public class PDF2text {
 	static void mipro() {
 		String cikkszam = "";
 		String arak = "";
-		String rowRegex = "(\\d{6}C?)(?:.|\\n)+?(\\d{0,3} ?\\d{1,3}) Ft.+";
+		String rowRegex = "(\\d{6}C?)(?:.|\\n)+?((?:\\d )?(?:\\d{0,3} )?\\d{1,3}) Ft.+";
 		Pattern rowRegexObject = Pattern.compile(rowRegex);
 		Matcher rowIlleszkedesek = rowRegexObject.matcher(text);
 		while (rowIlleszkedesek.find()) {
