@@ -16,13 +16,14 @@ public class PDF2text {
 	private static String text;
 
 	public static void main(String[] args) throws IOException {
-		String fileName = "mipro_arlista.pdf";
+		String fileName = "ecler_audio_arlista.pdf";
 		PDDocument doc = PDDocument.load(new File(fileName));
 		text = new PDFTextStripper().getText(doc);
-		System.out.println(text);
+		// System.out.println(text);
 		// audioTechnica();
-		mipro();
-		// writeToFileCSV();
+		// mipro();
+		ecler();
+		writeToFileCSV();
 	}
 
 	static void audioTechnica() {
@@ -53,6 +54,24 @@ public class PDF2text {
 			cikkszam = rowIlleszkedesek.group(1);
 			arak = rowIlleszkedesek.group(2).replace(" ", "");
 			System.out.println(cikkszam + ";" + arak);
+		}
+	}
+	
+	static void ecler() {
+		//int count = 0;
+		String row = "";
+		String cikkszam = "";
+		String arak = "";
+		String rowRegex = "(\\bC[A-Z\\d]+)(?:.|\\n){39,}?((?:\\d )?(?:\\d{0,3} )?\\d{1,3}) Ft.+";
+		Pattern rowRegexObject = Pattern.compile(rowRegex);
+		Matcher rowIlleszkedesek = rowRegexObject.matcher(text);
+		while (rowIlleszkedesek.find()) {
+			cikkszam = rowIlleszkedesek.group(1);
+			arak = rowIlleszkedesek.group(2).replace(" ", "");
+			//System.out.print(++count + ". ");
+			//System.out.println(cikkszam + ";" + arak);
+			row = cikkszam + ";" + arak;
+			toFile.add(row);
 		}
 	}
 
